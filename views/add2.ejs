@@ -8,7 +8,14 @@
 </head>
     <body>
         Counter
+        
         <%= count %> times
+        <form action='/process' method='post'>
+            <input type='submit' value='Add 2'>
+        </form>
+        <form action='/reset' method='post'>
+            <input type='submit' value='reset counter to 1'>
+        </form>
         
         
     </body>

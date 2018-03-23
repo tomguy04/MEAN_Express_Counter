@@ -27,29 +27,64 @@ app.set('view engine', 'ejs');
 
 // make session available in templates
 // middleware to make 'user' available to all templates
-app.use(function(req, res, next) {
-        if ('counter' in req.session){
-            console.log(`counter is in session, ${req.session.counter}`)
-            req.session.counter += 1;
-            console.log(`counter plus 1 is ${req.session.counter}`)
-            res.locals.counter = req.session.counter;
-            console.log(`assinged session to locals ${res.locals.counter}`);
-            next();
-        }
-        else{
-            console.log(`counter is NOT in session, ${req.session.counter}`)
-            req.session.counter = 0;
-            res.locals.counter = req.session.counter;
-            next();
-        }
-  });
+// app.use(function(req, res, next) {
+//         if ('counter' in req.session){
+//             console.log(`counter is in session, ${req.session.counter}`)
+//             req.session.counter += 1;
+//             console.log(`counter plus 1 is ${req.session.counter}`)
+//             res.locals.counter = req.session.counter;
+//             console.log(`assinged session to locals ${res.locals.counter}`);
+//             next();
+//         }
+//         else{
+//             console.log(`counter is NOT in session, ${req.session.counter}`)
+//             req.session.counter = 0;
+//             res.locals.counter = req.session.counter;
+//             next();
+//         }
+//   });
 
   
-var test = 1;
+
 // root route to render the index.ejs view
 app.get('/', function(req, res) {
     console.log(`*******************RES.LOCALS.COUNTER IS: ${res.locals.counter}`)
-    res.render("index",{count: res.locals.counter});   
+    if ('counter' in req.session){
+        console.log(`counter is in session, ${req.session.counter}`)
+        req.session.counter += 1;
+        console.log(`counter plus 1 is ${req.session.counter}`)
+        //res.locals.counter = req.session.counter;
+        //console.log(`assinged session to locals ${res.locals.counter}`);
+        //next();
+        res.render("index",{count: req.session.counter});   
+    }
+    else{
+        console.log(`counter is NOT in session, ${req.session.counter}`)
+        req.session.counter = 0;
+        //res.locals.counter = req.session.counter;
+        //next();
+        res.render("index",{count: req.session.counter});   
+    }
+})
+
+app.get('/add2', function(req,res){
+    if ('counter' in req.session){
+        res.render("add2",{count: req.session.counter});
+    }
+    else{
+        req.session.counter = 0;
+        res.render("add2",{count: req.session.counter});   
+    }
+})
+
+app.post('/process',function(req,res){
+    req.session.counter+=2
+   res.redirect('/add2')
+})
+
+app.post('/reset',function(req,res){
+    req.session.counter = 1;
+    res.redirect('/add2');
 })
 
 
